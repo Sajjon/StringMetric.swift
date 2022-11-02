@@ -1,5 +1,5 @@
 import XCTest
-@testable import StringMetric
+@testable import StringSimilarity
 
 final class StringExtTests: XCTestCase {
     func testStringCount() {

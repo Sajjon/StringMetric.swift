@@ -3,21 +3,21 @@
 import PackageDescription
 
 let package = Package(
-    name: "StringMetric",
+    name: "StringSimilarity",
     products: [
         .library(
-            name: "StringMetric",
-            targets: ["StringMetric"]
+            name: "StringSimilarity",
+            targets: ["StringSimilarity"]
         ),
     ],
     targets: [
         .target(
-            name: "StringMetric",
+            name: "StringSimilarity",
             dependencies: []
         ),
         .testTarget(
-            name: "StringMetricTests",
-            dependencies: ["StringMetric"]
+            name: "StringSimilarityTests",
+            dependencies: ["StringSimilarity"]
         )
     ]
 )
