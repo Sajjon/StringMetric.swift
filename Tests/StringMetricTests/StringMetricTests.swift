@@ -1,7 +1,7 @@
 import XCTest
 @testable import StringMetric
 
-class StringMetricTests: XCTestCase {
+final class StringMetricTests: XCTestCase {
     func testDistanceLevenshtein() {
         XCTAssertEqual("".distanceLevenshtein(between: "sitting"), 7)
         XCTAssertEqual("kitten".distanceLevenshtein(between: ""), 6)
@@ -61,13 +61,4 @@ class StringMetricTests: XCTestCase {
         XCTAssertEqual("kitten".distanceJaroWinkler(between: "sitting"), 0.746, accuracy: 0.001)
         XCTAssertEqual("君子和而不同".distanceJaroWinkler(between: "小人同而不和"), 0.555, accuracy: 0.001)
     }
-
-    static let allTests = [
-        ("testDistanceLevenshtein", testDistanceLevenshtein),
-        ("testDistanceDamerauLevenshtein", testDistanceDamerauLevenshtein),
-        ("testDistanceHamming", testDistanceHamming),
-        ("testDistanceMostFreqK", testDistanceMostFreqK),
-        ("testDistanceNormalizedMostFrequentK", testDistanceNormalizedMostFrequentK),
-        ("testDistanceJaroWinkler", testDistanceJaroWinkler),
-    ]
 }

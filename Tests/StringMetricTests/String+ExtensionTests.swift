@@ -1,7 +1,7 @@
 import XCTest
 @testable import StringMetric
 
-class StringExtTests: XCTestCase {
+final class StringExtTests: XCTestCase {
     func testStringCount() {
         XCTAssertEqual("".count, 0)
         XCTAssertEqual("YO".count, 2)
@@ -29,10 +29,4 @@ class StringExtTests: XCTestCase {
 
         XCTAssertEqual(s[0..<s.count-1], "Y")
     }
-
-    static let allTests = [
-        ("testStringCount", testStringCount),
-        ("testStringSubscriptOfInt", testStringSubscriptOfInt),
-        ("testStringSubscriptOfRange", testStringSubscriptOfIntRange),
-    ]
 }
