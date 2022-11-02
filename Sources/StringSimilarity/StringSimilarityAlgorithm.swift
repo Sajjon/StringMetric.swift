@@ -8,7 +8,7 @@
 import Foundation
 
 /// Algorithms for measuring string similarity.
-public enum StringSimilarityAlgorithm: Sendable, Hashable {
+public enum StringSimilarityAlgorithm: Sendable, Hashable, CustomStringConvertible {
     
     /// The [Damerau-Levenshtein][alg] similarity algorithm.
     ///
@@ -38,4 +38,17 @@ public enum StringSimilarityAlgorithm: Sendable, Hashable {
     ///
     ///[alg]: https://www.semanticscholar.org/paper/A-high-performance-approach-to-string-similarity-K-Valdestilhas-Soru/2ce037c9b5d77972af6892c170396c82d883dab9
     case mostFrequentCharactersNormalized(K: Int)
+}
+
+public extension StringSimilarityAlgorithm {
+    var description: String {
+        switch self {
+        case let .mostFrequentCharactersNormalized(K): return "Normalized Most Frequent K Characters (k=\(K))"
+        case let .mostFrequentCharacters(K): return "Most Frequent K Characters (k=\(K))"
+        case .levenshtein: return "Levenshtein"
+        case .jaroWinkler: return "Jaro-Winkler"
+        case .hamming: return "Hamming"
+        case .damerauLevenshtein: return "Damerau-Levenshtein"
+        }
+    }
 }
