@@ -2,11 +2,22 @@ import Foundation
 
 // MARK: Public
 public extension String {
+    
     /// Get distance between target. (alias of `distanceJaroWinkler(between:)`.)
     /// - Parameter target: The target `String`.
     /// - Returns: The Jaro-Winkler distance between the receiver and `target`.
-    func distance(between target: String) -> Double {
-        distanceJaroWinkler(between: target)
+    func distance(
+        between target: String,
+        algorithm: StringSimilarityAlgorithm = .jaroWinkler
+    ) -> Double {
+        switch algorithm {
+        case .jaroWinkler: return distanceJaroWinkler(between: target)
+        case .damerauLevenshtein: return Double(distanceDamerauLevenshtein(between: target))
+        case .hamming: return Double(distanceHamming(between: target))
+        case .levenshtein: return Double(distanceLevenshtein(between: target))
+        case let .mostFrequentCharacters(k): return Double(distanceMostFreqK(between: target, K: k))
+        case let .mostFrequentCharactersNormalized(k): return Double(distanceNormalizedMostFrequentK(between: target, k: k))
+        }
     }
     
     /// Get Damerau-Levenshtein distance.
@@ -14,7 +25,10 @@ public extension String {
     /// Reference <https://en.wikipedia.org/wiki/Damerau%E2%80%93Levenshtein_distance#endnote_itman#Distance_with_adjacent_transpositions>
     /// - Parameter target: The target `String`.
     /// - Returns: The Damerau-Levenshtein distance between the receiver and `target`.
-    func distanceDamerauLevenshtein(between target: String) -> Int {
+    func distanceDamerauLevenshtein(
+        between target: String
+    ) -> Int {
+        
         let selfCount = self.count
         let targetCount = target.count
         
@@ -85,9 +99,10 @@ public extension String {
     /// Reference <https://en.wikipedia.org/wiki/Hamming_distance>.
     /// - Parameter target: The target `String`.
     /// - Returns: The Hamming distance between the receiver and `target`.
-    func distanceHamming(between target: String) -> Int {
-        assert(self.count == target.count)
-        
+    func distanceHamming(
+        between target: String
+    ) -> Int {
+        precondition(self.count == target.count)
         return zip(self, target).filter { $0 != $1 }.count
     }
     
@@ -98,7 +113,9 @@ public extension String {
     /// Reference <https://en.wikipedia.org/wiki/Jaro%E2%80%93Winkler_distance>
     /// - Parameter target: The target `String`.
     /// - Returns: The Jaro-Winkler distance between the receiver and `target`.
-    func distanceJaroWinkler(between target: String) -> Double {
+    func distanceJaroWinkler(
+        between target: String
+    ) -> Double {
         
         var stringOne = self
         var stringTwo = target
@@ -155,7 +172,10 @@ public extension String {
     /// Reference <https://en.wikipedia.org/wiki/Levenshtein_distance#Iterative_with_two_matrix_rows>
     /// - Parameter target: The target `String`.
     /// - Returns: The Levenshtein distance between the receiver and `target`.
-    func distanceLevenshtein(between target: String) -> Int {
+    func distanceLevenshtein(
+        between target: String
+    ) -> Int {
+        
         let selfCount = self.count
         let targetCount = target.count
         
@@ -211,7 +231,12 @@ public extension String {
     ///   - target: The target `String`.
     ///   - K: The number of most frequently occuring characters to use for the similarity comparison.
     ///   - maxDistance: The maximum distance limit (defaults to a value of 10 if not provided).
-    func distanceMostFreqK(between target: String, K: Int, maxDistance: Int = 10) -> Int {
+    func distanceMostFreqK(
+        between target: String,
+        K: Int,
+        maxDistance: Int = 10
+    ) -> Int {
+        
         maxDistance - mostFrequentKSimilarity(
             characterFrequencyHashOne: self.mostFrequentKHashing(K),
             characterFrequencyHashTwo: target.mostFrequentKHashing(K)
@@ -227,15 +252,18 @@ public extension String {
     ///   - target: The target `String`.
     ///   - k: The number of most frequently occuring characters to use for the similarity comparison.
     /// - Returns: The normalized most frequent K distance between the receiver and `target`.
-    func distanceNormalizedMostFrequentK(between target: String, k: Int) -> Double {
+    func distanceNormalizedMostFrequentK(
+        between target: String,
+        k: Int
+    ) -> Double {
         
         let selfMostFrequentKHash = self.mostFrequentKHashing(k)
         let targetMostFrequentKHash = target.mostFrequentKHashing(k)
         let commonCharacters = Set(selfMostFrequentKHash.keys).intersection(Set(targetMostFrequentKHash.keys))
         
         // Return early if there are no common characters between the two hashes
-        guard commonCharacters.isEmpty == false else {
-            return 0.0
+        guard !commonCharacters.isEmpty else {
+            return 0
         }
         
         let similarity = commonCharacters.reduce(0) { characterCountSum, character -> Int in
@@ -268,6 +296,7 @@ private extension String {
             }
             return characterFrequencies1.value > characterFrequencies2.value
         }
+        
         // If receiver is shorter than `K` characters, use `sortedFrequencies.count`
         let clampedK = min(k, sortedFrequencies.count)
         
@@ -280,12 +309,15 @@ private extension String {
     /// - Parameters:
     ///   - characterFrequencyHashOne: a `Dictionary` hash returned from `mostFrequentKHashing(_ k: Int)` for a particular `String`.
     ///   - characterFrequencyHashTwo: a `Dictionary` hash returned from `mostFrequentKHashing(_ k: Int)` for a different `String`.
-    func mostFrequentKSimilarity(characterFrequencyHashOne: [Character: Int], characterFrequencyHashTwo: [Character: Int]) -> Int {
+    func mostFrequentKSimilarity(
+        characterFrequencyHashOne: [Character: Int],
+        characterFrequencyHashTwo: [Character: Int]
+    ) -> Int {
         
         let commonCharacters = Set(characterFrequencyHashOne.keys).intersection(Set(characterFrequencyHashTwo.keys))
         
         // Return early if there are no common characters between the two hashes
-        guard commonCharacters.isEmpty == false else {
+        guard !commonCharacters.isEmpty else {
             return 0
         }
         
